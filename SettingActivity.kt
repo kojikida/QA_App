@@ -18,10 +18,16 @@ class SettingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting)
 
-        // Preferenceから表示名を取得してEditTextに反映させる
-        val sp = PreferenceManager.getDefaultSharedPreferences(this)
-        val name = sp.getString(NameKEY, "")
-        nameText.setText(name)
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user !== null) {
+
+            // Preferenceから表示名を取得してEditTextに反映させる
+            val sp = PreferenceManager.getDefaultSharedPreferences(this)
+            val name = sp.getString(NameKEY, "")
+            nameText.setText(name)
+        } else {
+            nameText.setText("")
+        }
 
         mDataBaseReference = FirebaseDatabase.getInstance().reference
 

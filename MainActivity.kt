@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val body = map["body"] ?: ""
             val name = map["name"] ?: ""
             val uid = map["uid"] ?: ""
+            val like = map["like"]
             val imageString = map["image"] ?: ""
             val bytes =
                 if (imageString.isNotEmpty()) {
@@ -210,6 +211,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else if (id == R.id.nav_compter) {
             mToolbar.title = "コンピューター"
             mGenre = 4
+        } else if (id == R.id.nav_like) {
+            mToolbar.title = "お気に入り"
+            mGenre = 5
         }
 
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
