@@ -32,6 +32,8 @@ class QuestionDetailActivity : AppCompatActivity() {
     private lateinit var mAnswerRef: DatabaseReference
     private lateinit var mAuth: FirebaseAuth
 
+    private var mlike = false
+
 
 
     private val mEventListener = object : ChildEventListener {
