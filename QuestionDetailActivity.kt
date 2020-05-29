@@ -31,9 +31,7 @@ class QuestionDetailActivity : AppCompatActivity() {
     private lateinit var mAdapter: QuestionDetailListAdapter
     private lateinit var mAnswerRef: DatabaseReference
     private lateinit var mAuth: FirebaseAuth
-
-    private var mlike = false
-
+    private var mGenre: Int = 0
 
 
     private val mEventListener = object : ChildEventListener {
@@ -61,6 +59,7 @@ class QuestionDetailActivity : AppCompatActivity() {
 
         }
 
+
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
 
         }
@@ -86,8 +85,6 @@ class QuestionDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_detail)
-
-
 
         // 渡ってきたQuestionのオブジェクトを保持する
         val extras = intent.extras
@@ -126,6 +123,9 @@ class QuestionDetailActivity : AppCompatActivity() {
 
         }
 
+        val extra = intent.extras
+        mGenre = extra.getInt("genre")
+
         //------------------
         like_button.setOnClickListener{v ->
             // キーボードが出ていたら閉じる
@@ -137,7 +137,7 @@ class QuestionDetailActivity : AppCompatActivity() {
             //mGenre = extras.getInt("genre")
             val user = FirebaseAuth.getInstance().currentUser
 
-            val likeRef = dataBaseReference.child(LikePATH).child(UsersPATH).child(user!!.uid).child(mQuestion.questionUid)
+            val likeRef = dataBaseReference.child(LikePATH).child(UsersPATH).child(user!!.uid).child(mQuestion.questionUid).child(mQuestion.genre.toString())
 
             val data = HashMap<String, String>()
 
@@ -153,43 +153,10 @@ class QuestionDetailActivity : AppCompatActivity() {
 
             }
 
-                //like_button.setImageResource(R.drawable.none)
-                //likeRef.removeValue()
+
+        }
 
 
-
-
-
-            // ログイン済みのユーザーを取得する
-            //val user = FirebaseAuth.getInstance().currentUser
-
-            //if (user == null) {
-                // ログインしていない場合は何もしない
-                //Snackbar.make(v, "ログインしていません", Snackbar.LENGTH_LONG).show()
-            //} else {
-                // 変更した表示名をFirebaseに保存する
-                //val name = nameText.text.toString()
-                //val userRef = mDataBaseReference.child(UsersPATH).child(user.uid)
-                //val data = HashMap<String, String>()
-                //data["name"] = name
-                //userRef.setValue(data)
-
-                // 変更した表示名をPreferenceに保存する
-                //val sp = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-                //val editor = sp.edit()
-                //editor.putString(NameKEY, name)
-                //editor.commit()
-
-            }
-
-        //------------
-
-
-
-
-        //like_button.setOnClickListener {
-            //like_button.setImageResource(R.drawable.like)
-        //}
 
 
 
@@ -204,46 +171,16 @@ class QuestionDetailActivity : AppCompatActivity() {
     //val dataBaseReference = FirebaseDatabase.getInstance().reference
         mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)
         mAnswerRef.addChildEventListener(mEventListener)
+
+
     }
 
-    //fun onClick(v: View) {
 
-        // キーボードが出てたら閉じる
-        //val im = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        //im.hideSoftInputFromWindow(v.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
 
-        //like_button.setOnClickListener {
-        //like_button.setImageResource(R.drawable.like)
-        //like_button.setImageResource(R.drawable.none)
 
-        //val dataBaseReference = FirebaseDatabase.getInstance().reference
-        //val user = mAuth.currentUser
-        //val likeRef = dataBaseReference.child(LikePATH).child(UsersPATH).child(user!!.uid).child(mQuestion.questionUid)
 
-        //val data = HashMap<String, String>()
 
-        // UID
-        //data["uid"] = FirebaseAuth.getInstance().currentUser!!.uid
 
-        // 表示名
-        // Preferenceから名前を取る
-
-        // 回答を取得する
-        //val answer = answerEditText.text.toString()
-        //val like = like_button
-
-        //if (like.isEmpty()) {
-            // 回答が入力されていない時はエラーを表示するだけ
-            //Snackbar.make(v, "回答を入力して下さい", Snackbar.LENGTH_LONG).show()
-            //return
-        //}
-        //data["like"] = like
-
-            //progressBar.visibility = View.VISIBLE
-            //likeRef.push().setValue(data)
-        //}
-
-    //}
 
 
 }
