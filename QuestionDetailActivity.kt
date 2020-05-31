@@ -21,7 +21,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_answer_send.*
 import kotlinx.android.synthetic.main.activity_question_detail.*
-
+import android.util.Log
 
 import java.util.HashMap
 
@@ -30,8 +30,11 @@ class QuestionDetailActivity : AppCompatActivity() {
     private lateinit var mQuestion: Question
     private lateinit var mAdapter: QuestionDetailListAdapter
     private lateinit var mAnswerRef: DatabaseReference
+    private lateinit var mLikeRef: DatabaseReference
+
     private lateinit var mAuth: FirebaseAuth
     private var mGenre: Int = 0
+    private lateinit var mLike: Like
 
 
     private val mEventListener = object : ChildEventListener {
@@ -39,7 +42,9 @@ class QuestionDetailActivity : AppCompatActivity() {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val map = dataSnapshot.value as Map<String, String>
 
+
             val answerUid = dataSnapshot.key ?: ""
+
 
             for (answer in mQuestion.answers) {
                 // 同じAnswerUidのものが存在しているときは何もしない
@@ -55,6 +60,37 @@ class QuestionDetailActivity : AppCompatActivity() {
             val answer = Answer(body, name, uid, answerUid)
             mQuestion.answers.add(answer)
             mAdapter.notifyDataSetChanged()
+
+        }
+
+
+        override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
+
+        }
+
+        override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+
+        }
+
+        override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {
+
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+
+        }
+
+
+    }
+//お気に入りボタンの追加
+    private var mLikeFlag = false //falseはお気に入りしていない、trueはお気に入りしている
+
+    private val mLikeListener = object : ChildEventListener {
+        override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
+            //解除ボタンに切り替える処理を書く
+
+
+
 
 
         }
@@ -79,6 +115,7 @@ class QuestionDetailActivity : AppCompatActivity() {
 
     }
 
+   //ここまで
 
 
     @SuppressLint("RestrictedApi")
@@ -137,13 +174,13 @@ class QuestionDetailActivity : AppCompatActivity() {
             //mGenre = extras.getInt("genre")
             val user = FirebaseAuth.getInstance().currentUser
 
-            val likeRef = dataBaseReference.child(LikePATH).child(UsersPATH).child(user!!.uid).child(mQuestion.questionUid).child(mQuestion.genre.toString())
+            val likeRef = dataBaseReference.child(LikePATH).child(UsersPATH).child(user!!.uid).child(mQuestion.questionUid)
 
             val data = HashMap<String, String>()
 
             if (likeRef !== null) {
-                val like = "like"
-                data["like"] = like
+                val genre = mQuestion.genre
+                data["genre"] = genre.toString()
                 like_button.setImageResource(R.drawable.like)
                 likeRef.setValue(data)
 
@@ -157,20 +194,13 @@ class QuestionDetailActivity : AppCompatActivity() {
         }
 
 
-
-
-
-
         val dataBaseReference = FirebaseDatabase.getInstance().reference
-        val likeRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)
-
-
-        //val data = HashMap<String, String>()
-        // UID
-        //data["uid"] = FirebaseAuth.getInstance().currentUser!!.uid
-    //val dataBaseReference = FirebaseDatabase.getInstance().reference
         mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)
         mAnswerRef.addChildEventListener(mEventListener)
+
+        mLikeRef = dataBaseReference.child(LikePATH).child(UsersPATH).child(user!!.uid).child(mQuestion.questionUid)
+        mLikeRef.addChildEventListener(mLikeListener)
+
 
 
     }
