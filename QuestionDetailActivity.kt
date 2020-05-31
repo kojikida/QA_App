@@ -90,11 +90,36 @@ class QuestionDetailActivity : AppCompatActivity() {
             //解除ボタンに切り替える処理を書く
 
 
+            like_button.setOnClickListener { v ->
+                // キーボードが出ていたら閉じる
+                val im = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                im.hideSoftInputFromWindow(v.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
 
+                val dataBaseReference = FirebaseDatabase.getInstance().reference
+                //var mGenre: Int = 0
+                //mGenre = extras.getInt("genre")
+                val user = FirebaseAuth.getInstance().currentUser
 
+                val likeRef = dataBaseReference.child(LikePATH).child(UsersPATH).child(user!!.uid)
+                    .child(mQuestion.questionUid)
 
+                val data = HashMap<String, String>()
+
+                if (mLikeFlag == true) {
+                    //val genre = mQuestion.genre
+                    //data["genre"] = genre.toString()
+                    like_button.setImageResource(R.drawable.like)
+                    likeRef.setValue(data)
+
+                } else {
+                    like_button.setImageResource(R.drawable.none)
+                    likeRef.removeValue()
+
+                }
+                mLikeFlag = !mLikeFlag
+
+            }
         }
-
 
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
 
@@ -164,34 +189,7 @@ class QuestionDetailActivity : AppCompatActivity() {
         mGenre = extra.getInt("genre")
 
         //------------------
-        like_button.setOnClickListener{v ->
-            // キーボードが出ていたら閉じる
-            val im = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            im.hideSoftInputFromWindow(v.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
 
-            val dataBaseReference = FirebaseDatabase.getInstance().reference
-            //var mGenre: Int = 0
-            //mGenre = extras.getInt("genre")
-            val user = FirebaseAuth.getInstance().currentUser
-
-            val likeRef = dataBaseReference.child(LikePATH).child(UsersPATH).child(user!!.uid).child(mQuestion.questionUid)
-
-            val data = HashMap<String, String>()
-
-            if (likeRef !== null) {
-                val genre = mQuestion.genre
-                data["genre"] = genre.toString()
-                like_button.setImageResource(R.drawable.like)
-                likeRef.setValue(data)
-
-            } else {
-                like_button.setImageResource(R.drawable.none)
-                likeRef.removeValue()
-
-            }
-
-
-        }
 
 
         val dataBaseReference = FirebaseDatabase.getInstance().reference
